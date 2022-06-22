@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Don't get hitted</title>
+
+</head>
+ <style>
+
+
+*
+{
+  margin:0;
+  padding:0;
+  box-sizing: border-box;
+}
+body
+{
+ max-width:760px;
+ height:100vh;
+ margin:auto auto auto auto;
+ transition:.2s ease-in;
+ border:5px solid #333;
+}
+
+.game_container
+{
+ margin:10px auto 0;
+ position:relative;
+ width:270px;
+ height:350px;
+ border:none;
+ 
+ overflow:hidden;
+}
+#block
+{
+ width:90px;
+ height:85px;
+ background:red;
+ position : absolute;
+ animation: anim 1s  infinite;
+}
+@keyframes anim 
+{
+ from
+{
+ top:0;
+ transform: rotate(180deg);
+}
+to
+{
+ top:100%;
+ border-radius:50%;
+}
+
+}
+
+#character
+{
+ width:90px;
+ height:85px;
+ background:blue;
+ position: absolute;
+ bottom:0;
+ padding:5px;
+ transition: .2s;
+}
+
+.controls 
+{
+ margin:20px auto 0;
+ width:100%;
+ display:flex;
+ justify-content: center;
+ align-items: center;
+ 
+}
+.controls button
+{
+ display:block;
+ padding:10px 32px;
+ margin:15px;
+ border: 1px solid #f1f1f1;
+ background:#fa8d68;
+ color:#fff;
+ font-size: 1.2em;
+}
+
+.scoreCounter 
+{
+ width:50%;
+ margin:5px auto 0;
+ text-align: center;
+}
+.scoreCounter span
+{
+ display: block;
+ font-size: 1.2em;
+ color:red;
+}
+
+.score_inner
+{
+ width:100%;
+ text-align: center;
+}
+.score_inner span
+{
+ display: block;
+}
+
+
+.startOver
+{
+ margin:10px auto 0;
+ width:80%;
+ display:flex;
+ 
+ display: none;
+}
+
+.startOver button
+{
+ padding:10px 20px;
+ margin:0 auto 0;
+ display: block;
+ background:#fcc666;
+ border:1px solid #f1f1f1;
+ box-shadow: 0 0 3px inset #333;
+}
+.startOver button a
+{
+ text-decoration: none;
+ color:#444;
+}
+
+.share
+{
+ width:30%;
+
+}
+
+
+
+
+
+
+ </style>
+
+
+
+
+<body>
+  <div class="game_container">
+      
+    <div id="block"></div> 
+     <div id="character"></div> 
+     
+   </div>
+   
+   
+    <div class="scoreCounter">
+      <span id="scoreCounting">0</span>
+    </div>
+   
+    <div class="controls" id="controls">
+   <button id="moveLeft">Left</button>
+   <button id="moveRight" >Right</button>
+  </div>
+   
+    <div class="score_inner">
+      <span id="scoreInner"></span>
+    </div>
+   
+   <div class="startOver" id="startOver">
+     <button><a href="javascript:location.reload(true)">start Over</a></button>
+   </div>
+     
+     <div class="share">
+       <img src="https://img.icons8.com/material-sharp/24/000000/share.png"/ id="share">
+     </div>
+     <script>
+    
+
+        var btnLeft = document.getElementById('moveLeft')
+           
+           var btnRight = document.getElementById('moveRight')
+           
+           var block = document.getElementById('block')
+           
+           var character = document.getElementById('character')
+            
+            var score = document.getElementById('scoreCounting')
+            
+            var scoreInner = document.getElementById('scoreInner')
+            
+            var controlsbtn = document.getElementById('controls')
+            
+            var startOver = document.getElementById("startOver")
+            
+            var share = document.getElementById('share')
+            let Url = location.href;
+            let count = 0
+             
+              // share with friends
+               share.onclick = () =>{
+                 open('whatsapp://send?text=' + 'Don\'t get hitted by the the Box' +  '\n' + " " + Url)
+               }
+             
+             // score counter
+            var interval = setInterval(function(){
+              count++
+              score.innerHTML = count;
+              if(count == 50){
+                block.style.animation = "anim .9s infinite"
+              }else if(count == 100){
+                block.style.animation = "anim .7s infinite"
+              }
+            },500)
+              //  score counter end
+           
+           // random position with the block 
+            block.addEventListener("animationiteration",() =>{
+              var random = Math.floor(Math.random()*3)
+              left = random * 90
+              block.style.left = left + 'px'
+            })
+           // end of random position with the block 
+           
+            // button moving character to the right
+             function moveRight()
+             {
+               let right = parseInt(window.getComputedStyle(character).getPropertyValue('left'))
+               right += 90
+               if(right < 270){
+                 character.style.left = right + 'px'
+               }
+             }
+            btnRight.addEventListener('click',event =>{
+              if(btnRight.click){
+                moveRight()
+                  
+              }
+            
+            })
+             // end of button moving character to the right
+           
+           
+                // button moving character to the left
+             function moveLeft()
+             {
+               let left = parseInt(window.getComputedStyle(character).getPropertyValue('left'))
+               left -= 90
+               if(left>=0){
+                 character.style.left = left + 'px'
+               }
+             }
+            btnLeft.addEventListener('click',event =>{
+              if(btnLeft.click){
+                moveLeft()
+              }
+            })
+               
+               // check dead 
+               setInterval(function(){
+                 var characterTop = parseInt(window.getComputedStyle(character).getPropertyValue('left'))
+                 var blockTop = parseInt(window.getComputedStyle(block).getPropertyValue('top'))
+                 var blockLeft =parseInt(window.getComputedStyle(block).getPropertyValue('left'))
+                  if(characterTop == blockLeft && blockTop < 350 && blockTop > 270){
+                    controlsbtn.style.display = 'none'
+                      startOver.style.display = 'block'
+                       block.style.animation = "none"
+                    scoreInner.innerHTML = "Game over score : " + count
+                    clearInterval(interval)
+                   navigator.vibrate(20)
+                  }
+                  
+               })
+         </script>
+</body>
+</html>
